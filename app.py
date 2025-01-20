@@ -11,20 +11,26 @@ def parser_func() -> Namespace:
     return args.user_name
 
 def fetch_api(username : str) -> list[dict]:
-    url = f'https://api.github.com/users/{username}/events'
-    response = requests.get(url)
-    if (response.status_code == 200):
-        events : list[dict] = response.json()
-        return events
-    elif (response.status_code == 404):
-        print(f"Username {username} not found")
-    else:
-        print("unable to fetch data")
+    try:
+        url = f'https://api.github.com/users/{username}/events'
+        response = requests.get(url)
+        if (response.status_code == 200):
+            events : list[dict] = response.json()
+            return events
+        elif (response.status_code == 404):
+            print(f"Username {username} not found")
+        else:
+            print("unable to fetch data")
+    except:
+        print("Error fetching the data")
 
 def event_type(events : list[dict]):
+    if not events:
+        print("No events available")
+        return
     for event in events:
-        event_type : str = event['type']
-        repo : str= event['repo']['name']
+        event_type = event['type']
+        repo = event['repo']['name']
         if(event_type == 'PushEvent'):
             print(f"Pushed {event['payload']['size']} commits into {repo}")
         elif(event_type == 'CreateEvent'):

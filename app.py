@@ -27,19 +27,22 @@ def event_type(events : list[dict]):
     if not events:
         print("No events available")
         return
+    
+    event_types = {
+        'PushEvent' : lambda event : print(f"Pushed {event['payload']['size']} commits into {event['repo']['name']}"),
+        'CreateEvent' : lambda event : print(f"Created a new {event['payload']['ref_type']} in {event['repo']['name']}"),
+        'ForkEvent' : lambda event : print(f"Forked from {event['payload']['forkee']}"),
+        'WatchEvent' : lambda event : print(f"Starred {event['repo']['name']}")
+    }
+
     for event in events:
         event_type = event['type']
-        repo = event['repo']['name']
-        if(event_type == 'PushEvent'):
-            print(f"Pushed {event['payload']['size']} commits into {repo}")
-        elif(event_type == 'CreateEvent'):
-            print(f"Created a new {event['payload']['ref_type']} in {repo}")
-        elif(event_type == 'ForkEvent'):
-            print(f"Forked from {event['payload']['forkee']}")
-        elif event_type == 'WatchEvent':
-            print(f"Starred {repo}")
+        handler = event_types.get(event_type)
+
+        if handler:
+            handler(event)
         else:
-            print(f"other event {event_type} in {repo}")
+            print(f"other event {event_type} in {event['repo']['name']}")
 
 def main() -> None:
     username : str = parser_func()

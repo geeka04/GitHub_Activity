@@ -1,7 +1,6 @@
 import argparse 
 from argparse import Namespace
 import requests
-import json
 
 def parser_func() -> Namespace:
     parser = argparse.ArgumentParser(description = "Fetch the GitHub username from CLI")
@@ -36,12 +35,10 @@ def event_type(events : list[dict]):
         else:
             print(f"other event {event_type} in {repo}")
 
-
 def main() -> None:
     username : str = parser_func()
     events : list[dict] = fetch_api(username)
     event_type(events)
     
-
 if __name__ == '__main__':
     main()
